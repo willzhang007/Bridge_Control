@@ -1,0 +1,36 @@
+let officerKey = "officer"let authorizationCodeKey = "authorizationCode"let rankKey = "rank"let warpDriveKey = "warp"let warpFactorKey = "warpFactor"let favoriteTeaKey = "favoriteTea"let favoriteCaptainKey = "favoriteCaptain"let favoriteGadgetKey = "favoriteGadget"let favoriteAlienKey = "favoriteAlien"class FirstViewController: UIViewController {    @IBOutlet var officerLabel:UILabel!    @IBOutlet var authorizationCodeLabel:UILabel!    @IBOutlet var rankLabel:UILabel!    @IBOutlet var warpDriveLabel:UILabel!    @IBOutlet var warpFactorLabel:UILabel!    @IBOutlet var favoriteTeaLabel:UILabel!    @IBOutlet var favoriteCaptainLabel:UILabel!    @IBOutlet var favoriteGadgetLabel:UILabel!    @IBOutlet var favoriteAlienLabel:UILabel!
+
+
+
+func refreshFields() {    let defaults = NSUserDefaults.standardUserDefaults()    officerLabel.text = defaults.stringForKey(officerKey)    authorizationCodeLabel.text = defaults.stringForKey(authorizationCodeKey)    rankLabel.text = defaults.stringForKey(rankKey)
+    warpDriveLabel.text = defaults.boolForKey(warpDriveKey)                              ? "Engaged" : "Disabled"    warpFactorLabel.text = defaults.objectForKey(warpFactorKey)?.stringValue    favoriteTeaLabel.text = defaults.stringForKey(favoriteTeaKey)    favoriteCaptainLabel.text = defaults.stringForKey(favoriteCaptainKey)    favoriteGadgetLabel.text = defaults.stringForKey(favoriteGadgetKey)    favoriteAlienLabel.text = defaults.stringForKey(favoriteAlienKey)}
+
+
+
+
+override func viewWillAppear(animated: Bool) {    super.viewWillAppear(animated)    refreshFields()}
+
+
+
+class SecondViewController: UIViewController {    @IBOutlet var engineSwitch:UISwitch!    @IBOutlet var warpFactorSlider:UISlider!
+
+
+
+
+
+override func viewWillAppear(animated: Bool) {    super.viewWillAppear(animated)    refreshFields()}func refreshFields() {    let defaults = NSUserDefaults.standardUserDefaults()    engineSwitch.on = defaults.boolForKey(warpDriveKey)    warpFactorSlider.value = defaults.floatForKey(warpFactorKey)}@IBAction func onEngineSwitchTapped(sender: AnyObject) {    let defaults = NSUserDefaults.standardUserDefaults()    defaults.setBool(engineSwitch.on, forKey: warpDriveKey)}@IBAction func onWarpSliderDragged(sender: AnyObject) {    let defaults = NSUserDefaults.standardUserDefaults()    defaults.setFloat(warpFactorSlider.value, forKey: warpFactorKey)}func application(application: UIApplication,             didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {    // Override point for customization after application launch.    let defaults = [warpDriveKey: true, warpFactorKey: 5, favoriteAlienKey: "Vulcan"]    NSUserDefaults.standardUserDefaults().registerDefaults(defaults)return true }
+
+
+
+
+
+func applicationWillEnterForeground(notification:NSNotification) {    let defaults = NSUserDefaults.standardUserDefaults()    defaults.synchronize()    refreshFields()}let app = UIApplication.sharedApplication()    NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationWillEnterForeground:",name: UIApplicationWillEnterForegroundNotification,object: app)
+
+
+
+@IBAction func onEngineSwitchTapped(sender: AnyObject) { let defaults = NSUserDefaults.standardUserDefaults() defaults.setBool(engineSwitch.on, forKey: warpDriveKey) defaults.synchronize()}@IBAction func onWarpSliderDragged(sender: AnyObject) {let defaults = NSUserDefaults.standardUserDefaults() defaults.setFloat(warpFactorSlider.value, forKey: warpFactorKey) defaults.synchronize()}
+
+
+
+
+override func viewDidDisappear(animated: Bool) {    super.viewDidDisappear(animated)    NSNotificationCenter.defaultCenter().removeObserver(self)}@IBAction func onSettingsButtonTapped(sender: AnyObject) {    UIApplication.sharedApplication().openURL(                          NSURL(string: UIApplicationOpenSettingsURLString)!)}
